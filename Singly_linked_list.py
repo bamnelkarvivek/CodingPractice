@@ -36,3 +36,25 @@ class LinkedList:
                 prev_node = this_node
                 this_node = next_node
         return False
+    def __str__(self):
+        """Return a string representation of the list."""
+        nodes = []
+        current = self.root
+        while current:
+            nodes.append(str(current.get_data()))
+            current = current.get_next()
+        return " -> ".join(nodes) if nodes else "Empty List"
+
+if __name__ == "__main__":
+    #Example Usage
+    ll = LinkedList()
+    ll.add(5)
+    ll.add(10)
+    ll.add(15)
+
+    print("Initial list:",ll) # Output: 15 -> 10 -> 5
+    print("Size:",ll.size)    # Output: 3
+
+    ll.remove(10)
+    print("After removing 10:", ll) #Output: 15 -> 5
+    print("Size:",ll.size)          #Output: 2
