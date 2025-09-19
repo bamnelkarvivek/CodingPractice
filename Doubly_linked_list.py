@@ -37,6 +37,24 @@ class LinkedList:
         self.root = new_node
         self.size += 1
 
+    def append(self,data):
+        """Add a new node containing data to the tail of the list"""
+        new_node = Node(data, None, None)
+        if self.root is None: # List is empty
+            self.root = new_node
+            self.size += 1
+            return
+        
+        # Traverse to the end of the list
+        current_node = self.root
+        while current_node.get_next():
+            current_node = current_node.get_next()
+        
+        # Add the new node to the tail
+        current_node.set_next(new_node)
+        new_node.set_prev(current_node)
+        self.size += 1
+
     def remove(self,d):
         """Remove the first node containing the specified data."""
         prev_node = None
@@ -99,5 +117,9 @@ if __name__ == "__main__":
     ll.remove(10)
     print("After removing 10:", ll) #Output: 15 <-> 5
     print("Size:",ll.size)          #Output: 2
+
+    ll.append(21)
+    print("After append:",ll) # Output: 15 <-> 5 <-> 21
+    print("Size:",ll.size)    # Output: 3
 
     print("Reverse traversal:", reversed(ll))
