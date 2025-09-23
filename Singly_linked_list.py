@@ -58,12 +58,16 @@ class LinkedList:
         return " -> ".join(nodes) if nodes else "Empty List"
     
     def __reversed__(self):
+        """Return the list in reversed format."""
         nodes = []
         current = self.root
+
         # iterate over the list
         while current:
             nodes.append(str(current.get_data()))
             current = current.get_next()
+
+        # return the reversed list
         return " -> ".join(reversed(nodes)) if nodes else "Empty list."
 
 if __name__ == "__main__":
