@@ -4,76 +4,124 @@ class Node:
         self.left = None
         self.right = None
 
+    # Getter methods
     def get_value(self):
-        return self.value    
+        return self.value
+
     def get_left(self):
         return self.left
-    def set_left(self,value):
-        self.left = value
+
     def get_right(self):
         return self.right
-    def set_right(self,value):
-        self.right = value
 
-class BinarySearchTree:
+    # Setter methods
+    def set_value(self, value):
+        self.value = value
+
+    def set_left(self, node):
+        self.left = node
+
+    def set_right(self, node):
+        self.right = node
+
+
+class BST:
     def __init__(self):
         self.root = None
 
-    def insert(self,value):
-        new_node = Node(value)
-        if self.root is None: # Tree is empty
-            self.root = new_node
-            return
-        current_node = self.root
-        while True:
-            if value < current_node.get_value():
-                if current_node.get_left() is None:
-                    current_node.set_left(new_node)
-                    return
-                current_node = current_node.get_left()
-            else:
-                if current_node.get_right() is None:
-                    current_node.set_right(new_node)
-                    return
-                current_node = current_node.get_right()
-        
-    def lookup(self,value):
+    # Insert method
+    def insert(self, value):
         if self.root is None:
-            return False
-        current_node = self.root
-        while current_node is not None:
-            if value == current_node.get_value():
-                return True
-            elif value < current_node.get_value():
-                current_node = current_node.get_left()
+            self.root = Node(value)
+        else:
+            self._insert(self.root, value)
+
+    def _insert(self, node, value):
+        if value < node.get_value():
+            if node.get_left() is None:
+                node.set_left(Node(value))
             else:
-                current_node = current_node.get_right()
-        return False
-    
-    def inorder_traversal(self, node=None):
+                self._insert(node.get_left(), value)
+        else:
+            if node.get_right() is None:
+                node.set_right(Node(value))
+            else:
+                self._insert(node.get_right(), value)
+
+    # Search method
+    def search(self, value):
+        return self._search(self.root, value)
+
+    def _search(self, node, value):
         if node is None:
-            node = self.root
-        result = []
-        def traverse(current):
-            if current:
-                traverse(current.get_left())
-                result.append(current.get_value())
-                traverse(current.get_right())
-        traverse(node)
-        return result
+            return False
+        if node.get_value() == value:
+            return True
+        elif value < node.get_value():
+            return self._search(node.get_left(), value)
+        else:
+            return self._search(node.get_right(), value)
 
-    def __str__(self):
-        # Display as sorted list
-        return "BST: " + str(self.inorder_traversal())
+    # Public remove method
+    def remove(self, value):
+        if self.root is None:
+            return "Empty Tree."
+        self.root = self._remove(self.root, value)
 
+    # Private recursive remove
+    def _remove(self, node, value):
+        if node is None:
+            return None
+
+        if value < node.get_value():
+            node.set_left(self._remove(node.get_left(), value))
+        elif value > node.get_value():
+            node.set_right(self._remove(node.get_right(), value))
+        else:
+            # Case 1: No children
+            if node.get_left() is None and node.get_right() is None:
+                return None
+
+            # Case 2: One child
+            if node.get_left() is None:
+                return node.get_right()
+            elif node.get_right() is None:
+                return node.get_left()
+
+            # Case 3: Two children
+            successor = self._find_min(node.get_right())
+            node.set_value(successor.get_value())
+            node.set_right(self._remove(node.get_right(), successor.get_value()))
+
+        return node
+
+    def _find_min(self, node):
+        while node.get_left() is not None:
+            node = node.get_left()
+        return node
+
+    # Inorder traversal (sorted order)
+    def inorder(self):
+        return self._inorder(self.root)
+
+    def _inorder(self, node):
+        if node is None:
+            return []
+        return self._inorder(node.get_left()) + [node.get_value()] + self._inorder(node.get_right())
+
+
+# -------------------------------
+# Example usage
+# -------------------------------
 if __name__ == "__main__":
-    bst = BinarySearchTree()
-    bst.insert(10)
-    bst.insert(5)
-    bst.insert(15)
-    bst.insert(2)
-    bst.insert(7)
+    bst = BST()
+    for val in [50, 30, 70, 20, 40, 60, 80]:
+        bst.insert(val)
 
-    print(bst.lookup(7))   # True
-    print(bst.lookup(20))  # False
-    print(bst)             # BST: [2, 5, 7, 10, 15]
+    print("Inorder before deletion:", bst.inorder())
+    bst.remove(30)   # Case 3: node with two children
+    print("Inorder after deleting 30:", bst.inorder())
+    bst.remove(20)   # Case 1: leaf node
+    print("Inorder after deleting 20:", bst.inorder())
+    bst.remove(70)   # Case 2: one child
+    print("Inorder after deleting 70:", bst.inorder())
